@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <div class='row'>
+    <div class='col-sm-6 text-center col-sm-offset-3'>
+    <h1>Login</h1>
+{% if form.errors %}
+    {{ form.errors }}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next != "/" and next is not None %}
+    {% if user.is_authenticated %}
+    <p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+    {% else %}
+    <p>Please login to see this page.</p>
+    {% endif %}
+{% endif %}
+
+<form method="post" action="{% url 'login' %}">
+{% csrf_token %}
+<p>
+    {{ form.email.errors }}
+    {{ form.email.label_tag }}
+    {{ form.email }}<br>
+    {{ form.password.errors }}
+    {{ form.password.label_tag }}
+    {{ form.password }}
+</p>
+
+<input type="submit" value="login" />
+<input type="hidden" name="next" value="{{ next }}" />
+    {{ next }}
+</form>
+
+<p>Need to <a href='{% url "register" %}'>register</a>?</p>
+</div>
+</div>
+{% endblock %}

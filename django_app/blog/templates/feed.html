@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class='row'>
+        <div class='col-sm-6 text-center col-sm-offset-3'>
+        <h1>Posts Feed</h1>
+        {% if request.user.is_authenticated %}
+            {% if posts %}
+                <div class="text-center">
+                    {% for post in posts %}
+                    <b>{{ message }}</b><br/>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No posts have been written yet.<p>
+            {% endif %}
+        {% else %}
+            <p>No posts are available.<p>
+        {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
