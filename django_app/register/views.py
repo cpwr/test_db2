@@ -1,7 +1,7 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.views import LoginView as _LoginView
 from django.contrib.auth.views import LogoutView as _LogoutView
-from django.contrib.auth import get_user_model, authenticate, login
+from django.contrib.auth import get_user_model
 from django.urls.base import reverse_lazy
 from django.views.generic import CreateView
 from django.shortcuts import redirect
@@ -24,21 +24,18 @@ def activate_user_view(request, code=None):
                 profile.confirm(code)
                 profile.activation_key = None
                 profile.save()
-    return redirect("/login")
+    return redirect("login")
 
 
 class RegisterView(SuccessMessageMixin, CreateView):
 
     form_class = RegisterForm
     template_name = 'registration/register.html'
-    success_url = '/login'
+    success_url = reverse_lazy('login')
     success_message = (
         "Your account was created successfully."
         " Please check your email."
     )
-
-    def dispatch(self, *args, **kwargs):
-        return super(RegisterView, self).dispatch(*args, **kwargs)
 
 
 class LoginView(_LoginView):
@@ -53,5 +50,4 @@ class LogoutView(_LogoutView):
     """
     Logs out the user and displays 'You are logged out' message.
     """
-    template_name = 'registration/login.html'
-    next_page = reverse_lazy('blog:home')
+    next_page = reverse_lazy('login')

@@ -13,7 +13,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 class CustomUserManager(BaseUserManager):
 
-    def create_user(self, email, birthday, password=None):
+    def create_user(self, email, birthday, password=None, username=None):
 
         if not email:
             raise ValueError('Users must have an email address')
@@ -40,21 +40,21 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser):
+
     email = models.EmailField(
-        verbose_name='email address',
-        max_length=255,
+        max_length=140,
         unique=True,
     )
     birthday = models.DateField(null=True)
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    activation_key = models.CharField(max_length=512, null=True)
+    activation_key = models.CharField(max_length=400, null=True)
     confirmed = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    password_hash = models.CharField(max_length=512)
-    country = models.CharField(max_length=128, null=True)
-    city = models.CharField(max_length=128, null=True)
+    password_hash = models.CharField(max_length=400)
+    country = models.CharField(max_length=140, null=True)
+    city = models.CharField(max_length=140, null=True)
 
     class Meta:
         db_table = 'users'

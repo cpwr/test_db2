@@ -138,3 +138,6 @@ STATIC_URL = '/static/'
 
 # Custom Auth Model
 AUTH_USER_MODEL = 'register.CustomUser'
+AUTHENTICATION_BACKENDS = [
+    'register.backends.EmailAuthBackend',
+]
