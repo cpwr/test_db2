@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 
@@ -133,4 +133,3 @@ class CustomUser(AbstractBaseUser):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-

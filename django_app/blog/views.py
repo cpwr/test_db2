@@ -11,7 +11,7 @@ from .models import Post
 class HomeView(View, LoginRequiredMixin):
 
     def get(self, request):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return redirect('login')
         posts = Post.objects.order_by('-pub_date')
         return render(request, "feed.html", {"posts": posts})

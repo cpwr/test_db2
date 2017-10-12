@@ -33,5 +33,5 @@ urlpatterns = [
         activate_user_view,
         name='activate'
     ),
-    url(r'^', include("blog.urls", namespace='blog')),
+    url(r'^', include("blog.urls")),
 ]
