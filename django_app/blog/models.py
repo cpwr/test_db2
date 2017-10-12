@@ -18,13 +18,14 @@ class Category(models.Model):
 class Post(models.Model):
 
     author = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
-    title = models.CharField(max_length=120)
-    text = models.TextField()
+    title = models.CharField(max_length=120, null=False)
+    text = models.TextField(null=False)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
-    updated_by = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE, null=True)
     pub_date = models.DateTimeField(auto_now=False, auto_now_add=True)
-    published = models.BooleanField(default=True)
+    published = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category)
+    slug = models.SlugField(unique=True, max_length=255, allow_unicode=True)
 
     class Meta:
         ordering = ('-pub_date', '-updated_at',)
@@ -36,8 +37,8 @@ class Post(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
-    title = models.CharField(max_length=120)
-    text = models.TextField()
+    title = models.CharField(max_length=120, null=False)
+    text = models.TextField(null=False)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
     updated_by = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
     pub_date = models.DateTimeField(auto_now=False, auto_now_add=True)

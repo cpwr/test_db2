@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 
+from .forms import PostForm
 from .models import Post
 
 
@@ -14,4 +15,12 @@ class HomeView(View, LoginRequiredMixin):
         if not request.user.is_authenticated:
             return redirect('login')
         posts = Post.objects.order_by('-pub_date')
-        return render(request, "feed.html", {"posts": posts})
+        return render(request, "feed.html", {"posts": posts.all()})
+
+
+class CreatePostView(View, LoginRequiredMixin):
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        form = PostForm(request.GET)
