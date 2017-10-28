@@ -13,26 +13,24 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 class CustomUserManager(BaseUserManager):
 
-    def create_user(self, email, birthday, password=None, username=None):
+    def create_user(self, email, password=None):
 
         if not email:
             raise ValueError('Users must have an email address')
 
         user = self.model(
             email=self.normalize_email(email),
-            birthday=birthday,
         )
 
         user.password = password
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, birthday, password):
+    def create_superuser(self, email, password):
 
         user = self.create_user(
             email,
             password=password,
-            birthday=birthday,
         )
         user.is_admin = True
         user.save(using=self._db)
