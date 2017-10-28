@@ -42,13 +42,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('email', 'password', 'birthday', 'is_active', 'is_superuser')
-
-    def clean_password(self):
-        # Regardless of what the user provides, return the initial value.
-        # This is done here, rather than on the field, because the
-        # field does not have access to the initial value
-        return self.initial["password"]
+        fields = ('email', 'password', 'is_active', 'is_superuser')
 
 
 class UserAdmin(BaseUserAdmin):
@@ -59,7 +53,7 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'birthday', 'is_superuser')
+    list_display = ('email', 'is_superuser')
     list_filter = ('is_superuser',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -71,7 +65,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'birthday', 'password1', 'password2')}
+            'fields': ('email', 'password1', 'password2')}
         ),
     )
     search_fields = ('email',)
