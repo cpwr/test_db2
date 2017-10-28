@@ -144,4 +144,5 @@ STATIC_URL = os.path.join(BASE_DIR, 'static/')
 AUTH_USER_MODEL = 'register.CustomUser'
 AUTHENTICATION_BACKENDS = [
     'register.backends.EmailAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]

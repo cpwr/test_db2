@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -13,16 +14,16 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 class CustomUserManager(BaseUserManager):
 
-    def create_user(self, email, password=None):
+    def create_user(self, email, password):
 
         if not email:
             raise ValueError('Users must have an email address')
 
         user = self.model(
             email=self.normalize_email(email),
+            password=password,
         )
 
-        user.password = password
         user.save(using=self._db)
         return user
 
@@ -32,12 +33,12 @@ class CustomUserManager(BaseUserManager):
             email,
             password=password,
         )
-        user.is_admin = True
+        user.is_superuser = user.confirmed = user.is_active = True
         user.save(using=self._db)
         return user
 
 
-class CustomUser(AbstractBaseUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(
         max_length=140,
@@ -45,7 +46,6 @@ class CustomUser(AbstractBaseUser):
     )
     birthday = models.DateField(null=True)
     is_active = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
     activation_key = models.CharField(max_length=400, null=True)
     confirmed = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -72,7 +72,7 @@ class CustomUser(AbstractBaseUser):
 
     @property
     def is_staff(self):
-        return self.is_admin
+        return self.is_superuser
 
     def get_session_auth_hash(self):
         return self.password_hash
@@ -123,7 +123,7 @@ class CustomUser(AbstractBaseUser):
 
     @property
     def password(self):
-        return self.password
+        return self.password_hash
 
     @password.setter
     def password(self, password):
