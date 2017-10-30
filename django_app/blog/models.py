@@ -14,6 +14,9 @@ class Category(models.Model):
     class Meta:
         db_table = 'categories'
 
+    def __str__(self):
+        return self.name
+
 
 class Post(models.Model):
 
@@ -21,7 +24,11 @@ class Post(models.Model):
     title = models.CharField(max_length=120, null=False)
     text = models.TextField(null=False)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
-    updated_by = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE, null=True)
+    updated_by = models.ForeignKey(
+        User,
+        related_name='+', on_delete=models.CASCADE,
+        null=True, blank=True,
+    )
     pub_date = models.DateTimeField(auto_now=False, auto_now_add=True)
     published = models.BooleanField(default=False)
     categories = models.ManyToManyField(Category)
@@ -47,3 +54,6 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'comments'
+
+    def __str__(self):
+        return self.title

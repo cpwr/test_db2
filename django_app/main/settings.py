@@ -48,8 +48,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'psycopg2',
+    'werkzeug',
+    'itsdangerous',
+    'marshmallow',
+
     'register',
     'blog',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -145,4 +151,5 @@ STATIC_URL = os.path.join(BASE_DIR, 'static/')
 AUTH_USER_MODEL = 'register.CustomUser'
 AUTHENTICATION_BACKENDS = [
     'register.backends.EmailAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
