@@ -51,9 +51,11 @@ INSTALLED_APPS = [
     'psycopg2',
     'werkzeug',
     'itsdangerous',
+    'marshmallow',
 
     'register',
     'blog',
+    'api',
 ]
 
 MIDDLEWARE = [

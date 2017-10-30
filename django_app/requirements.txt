@@ -1,4 +1,7 @@
-django
-psycopg2
-werkzeug
-itsdangerous
+Django==2.0b1
+itsdangerous==0.24
+marshmallow==2.14.0
+pkg-resources==0.0.0
+psycopg2==2.7.3.2
+pytz==2017.2
+Werkzeug==0.12.2

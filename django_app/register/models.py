@@ -131,3 +131,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def to_dict(self):
+        return {
+            "id": self.pk,
+            "email": self.email,
+            "birthday": self.birthday,
+            "is_active": self.is_active,
+            "is_staff": self.is_superuser,
+            "registration_date": self.date_created,
+            "last_login": self.last_login,
+            "posts": self.posts,
+        }
