@@ -7,18 +7,3 @@ from .models import Post
 
 
 # Create your views here.
-
-class HomeView(View, LoginRequiredMixin):
-
-    def get(self, request):
-        if not request.user.is_authenticated:
-            return redirect('login')
-        posts = Post.objects.order_by('-pub_date')
-        return render(request, "feed.html", {"posts": posts.all()})
-
-
-class CreatePostView(View, LoginRequiredMixin):
-
-    def get(self, request):
-        if not request.user.is_authenticated:
-            return redirect('login')

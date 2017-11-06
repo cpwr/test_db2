@@ -44,6 +44,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         max_length=140,
         unique=True,
     )
+    name = models.CharField(max_length=40)
+    last_name = models.CharField(max_length=40)
     birthday = models.DateField(null=True)
     is_active = models.BooleanField(default=False)
     activation_key = models.CharField(max_length=400, null=True)
@@ -62,17 +64,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
     def get_full_name(self):
-        return self.email
+        return f'{self.name} {self.last_name}'
 
     def get_short_name(self):
-        return self.email
+        return self.name
 
     def __str__(self):
-        return self.email
-
-    @property
-    def is_staff(self):
-        return self.is_superuser
+        return f'Name: {self.name}; Email: {self.email}'
 
     def get_session_auth_hash(self):
         return self.password_hash

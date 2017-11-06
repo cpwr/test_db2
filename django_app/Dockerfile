@@ -1,11 +1,9 @@
 FROM python:3.6
-
-COPY ./requirements.txt /app/requirements.txt
-
-COPY . /app
-WORKDIR /app
-
-RUN pip install -r requirements.txt
-
-
-CMD [ "python", "./manage.py runserver" ]
+ENV PYTHONUNBUFFERED 1
+ENV LC_ALL=""
+ENV LC_NAME="uk_UA.UTF-8"
+RUN mkdir /config
+ADD requirements.txt /config/
+RUN pip install -r /config/requirements.txt
+RUN mkdir /src;
+WORKDIR /src
