@@ -1,34 +1,63 @@
-version: '2'
+version: '3.2'
+
 services:
   nginx:
     image: nginx:latest
     container_name: nginx
+    restart: always
     ports:
       - "8000:8000"
     volumes:
       - .:/src
       - ./config/nginx:/etc/nginx/conf.d
+      - /static:/../static
     depends_on:
       - web
+
   web:
     build: .
     container_name: django
-    environment:
-      SECRET_KEY: 'very_secret_key'
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && gunicorn main.wsgi -b 0.0.0.0:8000"
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations && python manage.py migrate && gunicorn django_app.wsgi -b 0.0.0.0:8000"
     depends_on:
       - db
+    links:
+      - db
+      - redis
     volumes:
       - .:/src
+      - /static:/../static
     expose:
       - "8000"
 
   db:
     image: postgres:latest
     container_name: db
-    environment:
-        POSTGRES_DB: blog
-        POSTGRES_USER: django
-        POSTGRES_PASSWORD: ololo
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./data/postgresql:/var/run/postgresql/
     expose:
       - "5432"
+
+  redis:
+    image: redis:latest
+    hostname: redis
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c "celery worker -A django_app.celery -Q default"
+    volumes:
+      - .:/src
+    links:
+      - db
+      - redis
+    env_file:
+      - .env
+    depends_on:
+      - redis

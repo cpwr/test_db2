@@ -23,10 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG")
 
 ALLOWED_HOSTS = [
-    'web'
+    '0.0.0.0'
 ]
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -53,12 +53,10 @@ INSTALLED_APPS = [
     'psycopg2',
     'werkzeug',
     'itsdangerous',
-
-    'rest_framework',
+    'graphene_django',
 
     'register',
     'blog',
-    'api',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +69,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'main.urls'
+ROOT_URLCONF = 'django_app.urls'
 
 TEMPLATES = [
     {
@@ -94,7 +92,7 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
-WSGI_APPLICATION = 'main.wsgi.application'
+WSGI_APPLICATION = 'django_app.wsgi.application'
 
 
 # Database
@@ -102,12 +100,11 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'blog',
-        'USER': 'django',
-        'PASSWORD': 'ololo',
-        'HOST': 'db',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'HOST': os.environ.get('POSTGRES_HOST'),
+        'PORT': os.environ.get('POSTGRES_PORT'),
     }
 }
 
@@ -148,11 +145,33 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+STATIC_ROOT='/static/'
 STATIC_URL = os.path.join(BASE_DIR, 'static/')
 
 # Custom Auth Model
 AUTH_USER_MODEL = 'register.CustomUser'
 AUTHENTICATION_BACKENDS = [
-    'register.backends.EmailAuthBackend',
+    'django_app.register.backends.EmailAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+GRAPHENE = {
+    'SCHEMA': 'django_app.schema.schema'
+}
+
+CELERY_ENABLE_UTC = True
+CELERY_TIMEZONE = "UTC"
+
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT')
+REDIS_DB = os.environ.get('REDIS_DB')
+
+BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+CELERY_REDIS_MAX_CONNECTIONS = 1
+
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ['application/json']
+
+CELERYD_MAX_TASKS_PER_CHILD = 1000

@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from graphene_django.views import GraphQLView
+
 from register.views import (
     RegisterView,
     LoginView,
@@ -33,5 +35,5 @@ urlpatterns = [
         activate_user_view,
         name='activate'
     ),
-    url(r'^api/', include("api.urls")),
+    url(r'^api', GraphQLView.as_view(graphiql=True)),
 ]

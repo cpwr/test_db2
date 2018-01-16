@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
-from django.core.mail import send_mail
-from django.urls import reverse
+
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
@@ -9,6 +8,7 @@ from django.contrib.auth.models import PermissionsMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
+from .tasks import send_activation_email as send_email
 
 # Create your models here.
 
@@ -25,6 +25,7 @@ class CustomUserManager(BaseUserManager):
         )
 
         user.save(using=self._db)
+        user.send_activation_email()
         return user
 
     def create_superuser(self, email, password):
@@ -79,29 +80,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if not self.confirmed:
             self.activation_key = self.generate_confirmation_token()
             self.save()
-            path_ = reverse('activate', kwargs={"code": self.activation_key})
-            #  TODO: prettify this
-            full_path = "http://" + "localhost:8000" + path_
-            subject = 'Activate Account'
-            from_email = settings.DEFAULT_FROM_EMAIL
-            message = f'Activate your account here: {full_path}'
-            recipient_list = [self.email]
-            html_message = (
-                f'<p>Follow the link to activate your account: {full_path}</p>'
-            )
-            print(html_message)
-            send_mail(
-                subject,
-                message,
-                from_email,
-                recipient_list,
-                fail_silently=False,
-                html_message=html_message,
-            )
+            send_email.apply_async(self)
+
 
     def generate_confirmation_token(self, expiration=3600):
         s = Serializer(settings.SECRET_KEY, expiration)
-        return s.dumps({'confirm': self.id})
+        return s.dumps({'confirm': self.id}).decode()
 
     def confirm(self, token):
         s = Serializer(settings.SECRET_KEY)
@@ -116,7 +100,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
         self.confirmed = True
         self.is_active = True
-        self.save()
         return True
 
     @property
@@ -129,15 +112,3 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-    def to_dict(self):
-        return {
-            "id": self.pk,
-            "email": self.email,
-            "birthday": self.birthday,
-            "is_active": self.is_active,
-            "is_staff": self.is_superuser,
-            "registration_date": self.date_created,
-            "last_login": self.last_login,
-            "posts": self.posts,
-        }
