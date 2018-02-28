@@ -6,7 +6,7 @@ from . import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_app.settings')
 
-app = Celery('django_app')
+app = Celery('tasks')
 app.conf.broker_url = settings.BROKER_URL
 
 # Using a string here means the worker doesn't have to serialize

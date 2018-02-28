@@ -51,7 +51,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "celery worker -A django_app.celery -Q default"
+    command: bash -c "celery worker -A django_app.celery:app -Q default --loglevel=info"
     volumes:
       - .:/src
     links:
