@@ -20,7 +20,11 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "python manage.py collectstatic --noinput && python manage.py makemigrations && python manage.py migrate && gunicorn django_app.wsgi -b 0.0.0.0:8000"
+    command: bash -c "
+      python manage.py collectstatic --noinput
+      && python manage.py makemigrations
+      && python manage.py migrate
+      && gunicorn django_app.wsgi -b 0.0.0.0:8000"
     depends_on:
       - db
     links:
@@ -61,3 +65,16 @@ services:
       - .env
     depends_on:
       - redis
+
+  nodejs:
+    build:
+      context: .
+      dockerfile: ./config/node/Dockerfile
+    volumes:
+      - .:/src
+      - ./logs/nodejs/:/root/.npm/_logs/
+      - ./static/js/dist:/src/life/static/js/dist
+      - ./static/js/dist/css:/src/life/static/js/dist/css
+    command: npm start
+    links:
+      - web:web

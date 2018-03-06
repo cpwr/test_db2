@@ -12,6 +12,7 @@ from .tasks import send_activation_email as send_email
 
 # Create your models here.
 
+
 class CustomUserManager(BaseUserManager):
 
     def create_user(self, email, password):
@@ -25,7 +26,7 @@ class CustomUserManager(BaseUserManager):
         )
 
         user.save(using=self._db)
-        user.send_activation_email()
+        # user.send_activation_email()
         return user
 
     def create_superuser(self, email, password):
@@ -80,12 +81,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if not self.confirmed:
             self.activation_key = self.generate_confirmation_token()
             self.save()
-            send_email.apply_async(self)
-
+            send_email.apply_async(self.email, self.activation_key)
 
     def generate_confirmation_token(self, expiration=3600):
         s = Serializer(settings.SECRET_KEY, expiration)
-        return s.dumps({'confirm': self.id}).decode()
+        return s.dumps({'confirm': self.pk}).decode()
 
     def confirm(self, token):
         s = Serializer(settings.SECRET_KEY)
@@ -95,7 +95,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         except:
             return False
 
-        if data.get('confirm') != self.id:
+        if data.get('confirm') != self.pk:
             return False
 
         self.confirmed = True

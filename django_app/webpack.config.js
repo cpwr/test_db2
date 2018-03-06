@@ -3,10 +3,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: path.resolve(__dirname, 'src/index.js'),
+  entry: path.resolve(__dirname, 'static/js/src/index.js'),
   devtool: 'source-map',
   devServer: {
-    contentBase: path.resolve(__dirname, 'dist'),
+    contentBase: path.resolve(__dirname, 'static/js/dist'),
     compress: true,
     hot: true
   },
@@ -14,7 +14,7 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        include: path.resolve(__dirname, 'src'),
+        include: path.resolve(__dirname, 'static/js/src'),
         use: {
           loader: 'babel-loader',
           options: {
@@ -31,12 +31,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Lol Kek Cheburek',
       hash: true,
-      template: path.resolve(__dirname, 'src/index.html')
+      template: path.resolve(__dirname, 'static/js/src/index.html')
     }),
     new webpack.HotModuleReplacementPlugin()
   ],
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'static/js/dist')
   }
 };
