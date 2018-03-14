@@ -1,10 +1,10 @@
-from celery import shared_task
+from celery.task import task
 from django.conf import settings
 from django.core.mail import send_mail
 from django.urls import reverse
 
 
-@shared_task
+@task(queue='default')
 def send_activation_email(email, activation_key):
     path_ = reverse('activate', kwargs={"code": activation_key})
     #  TODO: prettify this

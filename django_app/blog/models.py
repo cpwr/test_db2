@@ -20,7 +20,11 @@ class Category(models.Model):
 
 class Post(models.Model):
 
-    author = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User,
+        related_name='posts',
+        on_delete=models.CASCADE,
+    )
     title = models.CharField(max_length=120, null=False)
     body = models.TextField(null=False)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
@@ -43,14 +47,26 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User,
+        related_name='comments',
+        on_delete=models.CASCADE,
+    )
     title = models.CharField(max_length=120, null=False)
     body = models.TextField(null=False)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
-    updated_by = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(
+        User,
+        related_name='+',
+        on_delete=models.CASCADE,
+    )
     pub_date = models.DateTimeField(auto_now=False, auto_now_add=True)
     published = models.BooleanField(default=True)
-    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        Post,
+        related_name='comments',
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
         db_table = 'comments'
