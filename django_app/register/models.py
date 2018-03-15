@@ -26,7 +26,7 @@ class CustomUserManager(BaseUserManager):
         )
 
         user.save(using=self._db)
-        # user.send_activation_email()
+        user.send_activation_email()
         return user
 
     def create_superuser(self, email, password):
@@ -81,7 +81,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if not self.confirmed:
             self.activation_key = self.generate_confirmation_token()
             self.save()
-            send_email.apply_async(self.email, self.activation_key)
+            send_email.delay(self.email, self.activation_key)
 
     def generate_confirmation_token(self, expiration=3600):
         s = Serializer(settings.SECRET_KEY, expiration)
