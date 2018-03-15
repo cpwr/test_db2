@@ -24,7 +24,7 @@ services:
       python manage.py collectstatic --noinput
       && python manage.py makemigrations
       && python manage.py migrate
-      && gunicorn django_app.wsgi -b 0.0.0.0:8000"
+      && gunicorn django_app.wsgi -c config/gunicorn/settings.conf.py"
     depends_on:
       - db
     links:
@@ -55,7 +55,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "celery worker -A django_app.celery:app -Q default --loglevel=info"
+    command: bash -c "
+      celery worker
+      -A django_app.celery:app
+      -Q default --loglevel=debug
+      -f logs/celery.log"
     volumes:
       - .:/src
     links:
@@ -73,8 +77,8 @@ services:
     volumes:
       - .:/src
       - ./logs/nodejs/:/root/.npm/_logs/
-      - ./static/js/dist:/src/life/static/js/dist
-      - ./static/js/dist/css:/src/life/static/js/dist/css
+      - ./static/js/dist:/src/static/js/dist
+      - ./static/js/dist/css:/src/static/js/dist/css
     command: npm start
     links:
       - web:web
