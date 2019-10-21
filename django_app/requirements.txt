@@ -39,6 +39,6 @@ typing==3.6.2
 urllib3==1.22
 wcwidth==0.1.7
 websocket-client==0.44.0
-Werkzeug==0.12.2
+Werkzeug==0.15.3
 celery==4.1.0
 redis==2.10.6
