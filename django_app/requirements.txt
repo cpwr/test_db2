@@ -40,5 +40,5 @@ urllib3==1.22
 wcwidth==0.1.7
 websocket-client==0.44.0
 Werkzeug==0.12.2
-celery==4.1.0
+celery==5.2.2
 redis==2.10.6
